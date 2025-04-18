@@ -1,6 +1,6 @@
 <template>
     <div class="productos-container">
-      <h2>PRODUCTOS SHAFT</h2>
+      <h2>Otros productos </h2>
       <p>Lista de productos disponibles...</p>
     </div>
   </template>
