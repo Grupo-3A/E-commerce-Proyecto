@@ -6,8 +6,9 @@ import * as directives from 'vuetify/directives'
 import 'vuetify/styles'
 import PrimeVue from 'primevue/config'
 
-// Estilos de PrimeVue
-import 'primeicons/primeicons.css'  // Iconos de PrimeVue
+import 'primeicons/primeicons.css'
+import 'primeflex/primeflex.css'
+
 
 import App from './App.vue'
 import router from './router'
@@ -17,10 +18,11 @@ const vuetify = createVuetify({
   components,
   directives,
 })
-
+const pinia = createPinia()
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(vuetify)
 app.use(PrimeVue)
