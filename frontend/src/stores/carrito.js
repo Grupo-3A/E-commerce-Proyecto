@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-
+const images = import.meta.glob('@/assets/*', {
+  eager: true,
+  import: 'default',
+  query: '?url'
+})
 
 export const useCartStore = defineStore('cart', () => {
   const items = ref([])
@@ -11,13 +15,21 @@ export const useCartStore = defineStore('cart', () => {
     if (existing) {
       existing.quantity += product.quantity
     } else {
-      const imageUrl = new URL(`@/assets/images/${product.image}`, import.meta.url).href
+      const imageUrl = images[`/src/assets/${product.image}`]
+      console.log('Imagen resuelta:', imageUrl)
       items.value.push({ ...product, image: imageUrl })
     }
   }
 
   const clearCart = () => {
     items.value = []
+  }
+
+  const setItems = (newItems) => {
+    const imageUrl = images[`/src/assets/${newItems.image}`]
+    console.log('Imagen resuelta:', imageUrl)
+    items.value.push({ ...newItems, image: imageUrl })
+    items.value = newItems
   }
 
   const subtotal = computed(() =>
@@ -28,6 +40,7 @@ export const useCartStore = defineStore('cart', () => {
     items,
     addToCart,
     clearCart,
+    setItems,
     subtotal
   }
 })

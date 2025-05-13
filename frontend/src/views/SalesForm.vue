@@ -171,15 +171,15 @@ const items = [
   
           <!-- Paso 3 -->
           <template v-slot:item.3>
-            <h3 class="text-h6">Confirm</h3>
+            <h3 class="text-h6">Confirmacion</h3>
             <br />
             <v-sheet border>
               <v-table>
                 <thead>
                   <tr>
-                    <th>Description</th>
-                    <th class="text-end">Quantity</th>
-                    <th class="text-end">Price</th>
+                    <th>Descripcion</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Precio</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -189,7 +189,7 @@ const items = [
                     <td class="text-end">{{ product.quantity * product.price }}</td>
                   </tr>
                   <tr>
-                    <td>Shipping</td>
+                    <td>Envio</td>
                     <td></td>
                     <td class="text-end">${{ shipping }}</td>
                   </tr>
