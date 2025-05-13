@@ -3,12 +3,19 @@ import Carousel from 'primevue/carousel';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 
+import casco1 from '@/assets/LS2FF320StreamEvo.webp';
+import casco2 from '@/assets/LS2 MX436 Pioneer.webp';
+import casco3 from '@/assets/LS2 Valiant II FF900.webp';
+
+
 // Datos de prueba
 const products = [
-  { name: "Producto 1", price: 99.99, image: "bamboo-watch.jpg", inventoryStatus: "INSTOCK" },
-  { name: "Producto 2", price: 129.99, image: "blue-band.jpg", inventoryStatus: "LOWSTOCK" },
-  { name: "Producto 3", price: 59.99, image: "game-controller.jpg", inventoryStatus: "OUTOFSTOCK" }
+
+  { name: "LS2 FF320 Stream Evo",price: 150.00,image: casco1,inventoryStatus: "INSTOCK"},
+  { name: "LS2 MX436 Pioneer", price: 180.00, image: casco2, inventoryStatus: "LOWSTOCK" },
+  { name: "LS2 Valiant II FF900", price: 250.00, image: casco3, inventoryStatus: "OUTOFSTOCK" }
 ];
+
 
 // Opciones responsivas para el carrusel
 const responsiveOptions = [
@@ -29,26 +36,36 @@ const getSeverity = (status) => {
 </script>
 
 <template>
-    <Carousel :value="products" :numVisible="3" :numScroll="3" :responsiveOptions="responsiveOptions">
-      <template #item="slotProps">
-        <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-          <div class="mb-4">
-            <div class="relative mx-auto">
-              <img :src="'https://primefaces.org/cdn/primevue/images/product/' + slotProps.data.image" 
-                   :alt="slotProps.data.name" class="w-full rounded" />
-              <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data.inventoryStatus)" 
-                   class="absolute" style="left:5px; top: 5px"/>
-            </div>
+  <Carousel :value="products" :numVisible="3" :numScroll="3" :responsiveOptions="responsiveOptions">
+    <template #item="slotProps">
+      <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 flex flex-col h-full min-h-[420px] shadow-md">
+
+        <!-- Imagen con tamaño fijo y centrada -->
+        <div class="relative w-full h-60 flex items-center justify-center mb-4">
+          <img :src="slotProps.data.image" :alt="slotProps.data.name"
+               class="max-h-full max-w-full object-contain rounded" />
+          <Tag :value="slotProps.data.inventoryStatus" 
+               :severity="getSeverity(slotProps.data.inventoryStatus)" 
+               class="absolute left-2 top-2"/>
+        </div>
+
+        <!-- Contenido de texto centrado -->
+        <div class="flex-1 flex flex-col justify-between text-center px-2">
+          <div class="font-semibold text-lg mb-2">
+            {{ slotProps.data.name }}
           </div>
-          <div class="mb-4 font-medium">{{ slotProps.data.name }}</div>
-          <div class="flex justify-between items-center">
-            <div class="mt-0 font-semibold text-xl">${{ slotProps.data.price }}</div>
-            <span>
-              <Button icon="pi pi-heart" severity="secondary" outlined />
-              <Button icon="pi pi-shopping-cart" class="ml-2"/>
-            </span>
+          <div class="text-xl font-bold text-primary mb-4">
+            ${{ slotProps.data.price }}
+          </div>
+
+          <!-- Botones alineados abajo -->
+          <div class="flex justify-center gap-3 mt-auto">
+            <Button icon="pi pi-heart" severity="secondary" outlined />
+            <Button icon="pi pi-shopping-cart" />
           </div>
         </div>
-      </template>
-    </Carousel>
+
+      </div>
+    </template>
+  </Carousel>
 </template>
