@@ -1,14 +1,6 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { useCartStore } from '@/stores/carrito'
-const cart = useCartStore()
-
-const router = useRouter()
-
-const irASales = () => {
-  router.push('/SalesForm')
-}
+import NavigationDrawer from './Navigation-Drawer.vue'
 
 const indumentariaTop = ref([
 { title: 'Chaquetas', link: '/' },
@@ -61,6 +53,7 @@ const isOpen3 = ref(false)
 const isOpen4 = ref(false) 
 const isOpen5 = ref(false) 
 const isOpen6 = ref(false) 
+
 const isCartOpen = ref(false)
 </script>
 
@@ -108,54 +101,8 @@ const isCartOpen = ref(false)
       </v-app-bar>
 
       
-          <v-navigation-drawer
-          v-model="isCartOpen"
-          location="right"
-          temporary
-          width="500"
-        >
-          <v-toolbar flat>
-            <v-toolbar-title>Carrito de Compras</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="isCartOpen = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-toolbar>
 
-          <v-divider></v-divider>
-
-          <v-list>
-            <v-list-item
-                v-for="(item, index) in cart.items"
-                :key="index"
-              >
-                <v-row no-gutters>
-                  <v-col cols="4">
-                    <v-img
-                      :src="item.image"
-                      width="80"
-                      height="80"
-                      cover
-                      class="rounded"
-                    />
-                  </v-col>
-                  <v-col cols="8" class="pl-4">
-                    <v-list-item-title>{{ item.name }}</v-list-item-title>
-                    <v-list-item-subtitle>Cantidad: {{ item.quantity }}</v-list-item-subtitle>
-                    <v-list-item-subtitle>Precio: ${{ item.price }}</v-list-item-subtitle>
-                  </v-col>
-                </v-row>
-                <v-divider class="my-2"></v-divider>
-              </v-list-item>
-          </v-list>
-
-
-
-          <v-card flat class="pa-4">
-            <v-btn @click="irASales" color="primary" block>Ir al checkout</v-btn>
-          </v-card>
-        </v-navigation-drawer>
-        
+      <NavigationDrawer v-model="isCartOpen" />
         
 
 
