@@ -5,6 +5,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import 'vuetify/styles'
 import PrimeVue from 'primevue/config'
+import { useAuthStore } from './stores/authService'
 
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
@@ -27,3 +28,6 @@ app.use(vuetify)
 app.use(PrimeVue)
 
 app.mount('#app')
+
+const authStore = useAuthStore()
+authStore.cargarSesion()

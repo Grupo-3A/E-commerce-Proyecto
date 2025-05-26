@@ -10,14 +10,15 @@ const images = import.meta.glob('@/assets/*', {
 export const useCartStore = defineStore('cart', () => {
   const items = ref([])
 
+
+  const resolveImage = (filename) => images[`/src/assets/${filename}`] || ''
+
   const addToCart = (product) => {
     const existing = items.value.find(item => item.name === product.name)
     if (existing) {
       existing.quantity += product.quantity
     } else {
-      const imageUrl = images[`/src/assets/${product.image}`]
-      console.log('Imagen resuelta:', imageUrl)
-      items.value.push({ ...product, image: imageUrl })
+      items.value.push({ ...product, image: resolveImage(product.image) })
     }
   }
 
@@ -25,11 +26,12 @@ export const useCartStore = defineStore('cart', () => {
     items.value = []
   }
 
+
   const setItems = (newItems) => {
-    const imageUrl = images[`/src/assets/${newItems.image}`]
-    console.log('Imagen resuelta:', imageUrl)
-    items.value.push({ ...newItems, image: imageUrl })
-    items.value = newItems
+    items.value = newItems.map(item => ({
+      ...item,
+      image: resolveImage(item.image)
+    }))
   }
 
   const subtotal = computed(() =>

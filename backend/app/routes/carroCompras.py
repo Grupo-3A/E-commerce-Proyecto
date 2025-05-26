@@ -12,6 +12,7 @@ def obtener_carrosCom():
     for item in carrosCom:
         resultado.append({
             'id': item.id,
+            'idUsuario': item.idUsuario,
             'subtotal': item.subtotal
         })
 
@@ -25,6 +26,7 @@ def buscar_carroCom(id):
     resultado = []
 
     resultado.append({
+        'idUsuario': carroCom.idUsuario,
         'subtotal': carroCom.subtotal
     })
 
@@ -35,6 +37,7 @@ def buscar_carroCom(id):
 def crear_carroCom():
     data = request.get_json()
     nuevo_carroCom = CarroCompras(
+        idUsuario=int(data['idUsuario']),
         subtotal=float(data['subtotal'])
     )
     db.session.add(nuevo_carroCom)
@@ -48,6 +51,7 @@ def actualizar_carroCom(id):
     carroCom = CarroCompras.query.get_or_404(id)
     data = request.get_json()
     carroCom.subtotal = data['subtotal']
+    carroCom.idUsuario = data['idUsuario']
     db.session.commit()
     return jsonify({'mensaje': 'Carro Compras actualizado'})
 

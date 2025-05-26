@@ -9,6 +9,8 @@ const router = createRouter({
     { path: '/ProductShaft', name: 'productshaft', component: () => import('../views/ProductShaft.vue') },
     { path: '/ProductAgv', name: 'productagv', component: () => import('../views/ProductAgv.vue') },
     { path: '/SalesForm', name: 'salesform', component: () => import('../views/SalesForm.vue') },
+    { path: '/LoginUser', name: 'loginUser', component: () => import('../views/LoginUser.vue') },
+    { path: '/RegisterUser', name: 'registerUser', component: () => import('../views/RegisterUser.vue') },
   ],
 })
 

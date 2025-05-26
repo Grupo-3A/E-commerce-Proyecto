@@ -48,7 +48,8 @@ const items = [
           show-actions
         >
           <!-- Paso 1 -->
-          <template v-slot:item.1>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template #item.1>
             <h3 class="text-h6">Order</h3>
             <br />
             <v-sheet border>
@@ -92,7 +93,8 @@ const items = [
           </template>
   
           <!-- Paso 2 -->
-          <template v-slot:item.2>
+           <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template #item.2>
             <h3 class="text-h6">Shipping</h3>
             <br />
             <v-col
@@ -170,7 +172,8 @@ const items = [
           </template>
   
           <!-- Paso 3 -->
-          <template v-slot:item.3>
+           <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template #item.3>
             <h3 class="text-h6">Confirmacion</h3>
             <br />
             <v-sheet border>
