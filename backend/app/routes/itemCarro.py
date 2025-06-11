@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app import db
-from app.models import ItemCarro, Productos, CarroCompras
+from app.models import ItemCarro, Productos, CarroCompras, Categoria, Marca, Talla
 
 itemCarro_bp = Blueprint('item_carro', __name__)
 
@@ -11,6 +11,9 @@ def obtener_itemCar():
 
     for item in items:
         producto = Productos.query.get_or_404(item.idProductos)
+        categoria = Categoria.query.get_or_404(producto.idCategoria)
+        marca = Marca.query.get_or_404(producto.idMarca)
+        talla = Talla.query.get_or_404(producto.idTalla)
         resultado.append({
             'id': item.id,
             'idProductos': item.idProductos,
@@ -18,7 +21,11 @@ def obtener_itemCar():
             'descripcion': producto.descripcion,
             'precio': producto.precio,
             'stock': producto.stock,
-            'imagen': producto.imagen,
+            'imagenPrin': producto.imagenPrin,
+            'imagenesDet': producto.imagenesDet,
+            'categoria': categoria.categoria,
+            'marca': marca.marca,
+            'talla': talla.talla,
             'idCarro': item.idCarro,
             'cantidad': item.cantidad
         })
@@ -32,6 +39,9 @@ def buscar_itemCar(id):
     resultado = []
 
     producto = Productos.query.get_or_404(itemCar.idProductos)
+    categoria = Categoria.query.get_or_404(producto.idCategoria)
+    marca = Marca.query.get_or_404(producto.idMarca)
+    talla = Talla.query.get_or_404(producto.idTalla)
     resultado.append({
     'id': itemCar.id,
     'idProductos': itemCar.idProductos,
@@ -39,7 +49,11 @@ def buscar_itemCar(id):
     'descripcion': producto.descripcion,
     'precio': producto.precio,
     'stock': producto.stock,
-    'imagen': producto.imagen,
+    'imagenPrin': producto.imagenPrin,
+    'imagenesDet': producto.imagenesDet,
+    'categoria': categoria.categoria,
+    'marca': marca.marca,
+    'talla': talla.talla,
     'idCarro': itemCar.idCarro,
     'cantidad': itemCar.cantidad
     })
@@ -55,6 +69,9 @@ def obtener_items_carro_compras(idCarro):
 
     for item in items:
         producto = Productos.query.get_or_404(item.idProductos)
+        categoria = Categoria.query.get_or_404(producto.idCategoria)
+        marca = Marca.query.get_or_404(producto.idMarca)
+        talla = Talla.query.get_or_404(producto.idTalla)
         resultado.append({
             'id': item.id,
             'idProductos': item.idProductos,
@@ -62,7 +79,11 @@ def obtener_items_carro_compras(idCarro):
             'descripcion': producto.descripcion,
             'precio': producto.precio,
             'stock': producto.stock,
-            'imagen': producto.imagen,
+            'imagenPrin': producto.imagenPrin,
+            'imagenesDet': producto.imagenesDet,
+            'categoria': categoria.categoria,
+            'marca': marca.marca,
+            'talla': talla.talla,
             'idCarro': item.idCarro,
             'cantidad': item.cantidad
         })
@@ -81,7 +102,7 @@ def crear_itemCar():
     )
     db.session.add(nuevo_itemCar)
     db.session.commit()
-    return jsonify({'mensaje': 'Item Carro creado exitosamente'}), 201
+    return jsonify({'id': nuevo_itemCar.id}), 201
 
 
 

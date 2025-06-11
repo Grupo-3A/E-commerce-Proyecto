@@ -1,16 +1,19 @@
 from flask import Blueprint, request, jsonify
 from app import db
-from app.models import Favoritos, Productos, Usuarios
+from app.models import Favoritos, Productos, Usuarios, Categoria, Marca, Talla
 
 favoritos_bp = Blueprint('favoritos', __name__)
 
 @favoritos_bp.route('/obtener-favoritos/<int:idUsuario>', methods=['GET'])
-def obtener_favoritos(idUsuario):
+def obtener_favoritos_usuario(idUsuario):
     favoritos = Favoritos.query.filter_by(idUsuario=idUsuario).all()
     resultado = []
 
     for item in favoritos:
         producto = Productos.query.get_or_404(item.idProductos)
+        categoria = Categoria.query.get_or_404(producto.idCategoria)
+        marca = Marca.query.get_or_404(producto.idMarca)
+        talla = Talla.query.get_or_404(producto.idTalla)
         resultado.append({
             'id': item.id,
             'idProductos': item.idProductos,
@@ -18,7 +21,39 @@ def obtener_favoritos(idUsuario):
             'descripcion': producto.descripcion,
             'precio': producto.precio,
             'stock': producto.stock,
-            'imagen': producto.imagen,
+            'imagenPrin': producto.imagenPrin,
+            'imagenesDet': producto.imagenesDet,
+            'categoria': categoria.categoria,
+            'marca': marca.marca,
+            'talla': talla.talla,
+            'idUsuario': item.idUsuario
+        })
+
+    return jsonify(resultado)
+
+
+@favoritos_bp.route('//', methods=['GET'])
+def obtener_favoritos():
+    favoritos = Favoritos.query.all()
+    resultado = []
+
+    for item in favoritos:
+        producto = Productos.query.get_or_404(item.idProductos)
+        categoria = Categoria.query.get_or_404(producto.idCategoria)
+        marca = Marca.query.get_or_404(producto.idMarca)
+        talla = Talla.query.get_or_404(producto.idTalla)
+        resultado.append({
+            'id': item.id,
+            'idProductos': item.idProductos,
+            'nombre': producto.nombre,
+            'descripcion': producto.descripcion,
+            'precio': producto.precio,
+            'stock': producto.stock,
+            'imagenPrin': producto.imagenPrin,
+            'imagenesDet': producto.imagenesDet,
+            'categoria': categoria.categoria,
+            'marca': marca.marca,
+            'talla': talla.talla,
             'idUsuario': item.idUsuario
         })
 
@@ -31,6 +66,9 @@ def buscar_favorito(id):
     resultado = []
 
     producto = Productos.query.get_or_404(favorito.idProductos)
+    categoria = Categoria.query.get_or_404(producto.idCategoria)
+    marca = Marca.query.get_or_404(producto.idMarca)
+    talla = Talla.query.get_or_404(producto.idTalla)
     resultado.append({
         'id': favorito.id,
             'idProductos': favorito.idProductos,
@@ -38,7 +76,11 @@ def buscar_favorito(id):
             'descripcion': producto.descripcion,
             'precio': producto.precio,
             'stock': producto.stock,
-            'imagen': producto.imagen,
+            'imagenPrin': producto.imagenPrin,
+            'imagenesDet': producto.imagenesDet,
+            'categoria': categoria.categoria,
+            'marca': marca.marca,
+            'talla': talla.talla,
             'idUsuario': favorito.idUsuario
         })
 

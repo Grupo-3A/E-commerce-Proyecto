@@ -3,22 +3,50 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
 
+class Categoria(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    categoria = db.Column(db.String(100), nullable=False)
+
+    producto = db.relationship("Productos", back_populates="Categoria")
+
+
+class Marca(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    marca = db.Column(db.String(100), nullable=False)
+
+    producto = db.relationship("Productos", back_populates="Marca")
+
+
+class Talla(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    talla = db.Column(db.String(100), nullable=False)
+
+    producto = db.relationship("Productos", back_populates="Talla")
+
+
 class Productos(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     descripcion = db.Column(db.String(300), nullable=False)
     precio = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
-    imagen = db.Column(db.String(150))
+    imagenPrin = db.Column(db.String(150))
+    imagenesDet = db.Column(db.String(150))
+    idCategoria = db.Column(db.Integer, db.ForeignKey("categoria.id"),nullable=True)
+    idMarca = db.Column(db.Integer, db.ForeignKey("marca.id"), nullable=True)
+    idTalla = db.Column(db.Integer, db.ForeignKey("talla.id"), nullable=True)
 
     ItemCarros = db.relationship("ItemCarro", back_populates="producto", cascade="all, delete-orphan")
     Favoritos = db.relationship("Favoritos", back_populates="producto", uselist=False)
+    Categoria = db.relationship("Categoria", back_populates="producto")
+    Marca = db.relationship("Marca", back_populates="producto")
+    Talla = db.relationship("Talla", back_populates="producto")
 
 
 class CarroCompras(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subtotal = db.Column(db.Float, nullable=False)
-    idUsuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), unique=True, nullable=False)
+    idUsuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
 
     Pedido = db.relationship("Pedido", back_populates="CarroCompras", uselist=False)
     ItemCarros = db.relationship("ItemCarro", back_populates="carro", cascade="all, delete-orphan")
@@ -75,5 +103,9 @@ class Favoritos(db.Model):
 
     producto = db.relationship("Productos", back_populates="Favoritos")
     usuario = db.relationship("Usuarios", back_populates="Favoritos")
+
+
+
+
 
 

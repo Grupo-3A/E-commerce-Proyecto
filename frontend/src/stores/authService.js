@@ -1,15 +1,25 @@
 import axios from 'axios';
 import { defineStore } from 'pinia'
 
-const API = 'http://localhost:5000';
+const API = 'http://localhost:5000/usuarios';
 
 export const login = async (email, password) => {
-  const res = await axios.post(`${API}/usuarios/login`, { email, password });
+  const res = await axios.post(`${API}/login`, { email, password });
   return res.data;
 };
 
 export const register = async (usuario) => {
-  const res = await axios.post(`${API}/usuarios/`, usuario);
+  const res = await axios.post(`${API}/`, usuario);
+  return res.data;
+};
+
+export const invitado = async () => {
+  const res = await axios.post(`${API}/tokenNoUser`);
+  return res.data;
+};
+
+export const buscarUsuario = async (idUsuario) => {
+  const res = await axios.get(`${API}/${idUsuario}`);
   return res.data;
 };
 
@@ -42,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('usuario')
         localStorage.removeItem('email')
       },
-      cargarSesion() {
+      async cargarSesion() {
         const token = localStorage.getItem('token')
         const id = localStorage.getItem('id')
         const usuario = localStorage.getItem('usuario')
@@ -52,9 +62,27 @@ export const useAuthStore = defineStore('auth', {
           this.id = JSON.parse(id)
           this.usuario = JSON.parse(usuario)
           this.email = JSON.parse(email)
+        }else if(token && usuario && !tokenExpirado(token)){
+          this.token = token
+          this.usuario = JSON.parse(usuario)
+        }else if(token == null){
+          const response =  await invitado()
+          this.token = response.token;
+          this.usuario = response.guestId;
+          localStorage.setItem('token', response.token)
+          localStorage.setItem('usuario', JSON.stringify(response.guestId))
         }else{
             this.cerrarSesion()
+            const response =  await invitado()
+            this.token = response.token;
+            this.usuario = response.guestId;
+            localStorage.setItem('token', response.token)
+            localStorage.setItem('usuario', JSON.stringify(response.guestId))
         }
+      },
+      async consultarUsuario(idUsuario){
+          const response = await buscarUsuario(idUsuario);
+          return response
       }
     }
   })

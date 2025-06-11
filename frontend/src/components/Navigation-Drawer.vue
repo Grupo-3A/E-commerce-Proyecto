@@ -1,16 +1,16 @@
 <script setup>
-import { computed, watch } from 'vue'
-import { useCartStore } from '@/stores/carrito'
+import { computed, watch, } from 'vue'
+import { useCartStore } from '@/stores/carritoItems'
+import { carroCompraStore } from '@/stores/carroCompras'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 
 const props = defineProps(['modelValue'])
 const emit = defineEmits(['update:modelValue'])
 
 const cart = useCartStore()
+const carroStore = carroCompraStore()
 const router = useRouter()
 
-const cartTotal = computed(() => cart.cartTotal)
 
 const drawerModel = computed({
   get: () => props.modelValue,
@@ -23,25 +23,9 @@ const irASales = () => {
   router.push('/SalesForm')
 }
 
-const cargarCarrito = () => {
-  axios.get('http://127.0.0.1:5000/item_carro/por-carro/2')
-    .then(res => {
-      const items = res.data.map(item => ({
-        name: item.nombre,
-        quantity: item.cantidad,
-        price: item.precio,
-        image: item.imagen
-      }))
-      cart.setItems(items)
-    })
-    .catch(err => {
-      console.error('Error al cargar carrito:', err)
-    })
-}
-
-watch(drawerModel, (nuevoValor) => {
+ watch (drawerModel, (nuevoValor) => {
   if (nuevoValor === true) {
-    cargarCarrito()
+   cart.cargarCarrito(carroStore.id)
   }
 })
 </script>
@@ -49,7 +33,8 @@ watch(drawerModel, (nuevoValor) => {
 <template>
   <v-navigation-drawer
     v-model="drawerModel"
-    location="right"
+    location="end"
+    app
     temporary
     width="500"
     class="bg-indigo-lighten-5 text-white"
@@ -104,7 +89,7 @@ watch(drawerModel, (nuevoValor) => {
 
     <v-card flat class="pa-4 bg-purple-darken-2">
       <div class="text-subtitle-1 font-weight-bold mb-3 text-white">
-        Total: ${{ cartTotal }}
+        Total: ${{ carroStore.subtotal}}
       </div>
       <v-btn
         @click="irASales"

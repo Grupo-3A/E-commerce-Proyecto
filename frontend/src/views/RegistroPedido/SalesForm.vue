@@ -1,8 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useCartStore } from '@/stores/carrito'
+import { ref, computed, onMounted } from 'vue'
+import { useCartStore } from '@/stores/carritoItems'
+import { useAuthStore } from '@/stores/authService'
+import { carroCompraStore } from '@/stores/carroCompras'
+import { pedidoStore } from '@/stores/pedidos'
 
 const cart = useCartStore()
+const auth = useAuthStore()
+const carroCompras = carroCompraStore()
+const pedido = pedidoStore()
 
 const step = ref(1)
 const shipping = ref(0)
@@ -17,7 +23,14 @@ const items = [
   'Confirmacion',
 ]
 
-  const email = ref('')
+const usuario = ref(null)
+
+const email = ref('')
+const nombre = ref('')
+const telefono = ref('')
+const direccion = ref('')
+const detDireccion = ref('')
+const cedula = ref('')
 
   const rules = {
     required: value => !!value || 'Required.',
@@ -27,6 +40,26 @@ const items = [
     },
   }
 
+onMounted(async () => {
+  usuario.value = await auth.consultarUsuario(auth.id);
+  email.value        = usuario.value.email
+  nombre.value       = usuario.value.nombreUsu
+  telefono.value     = usuario.value.telefono
+  direccion.value    = usuario.value.direccion
+  detDireccion.value = usuario.value.detDireccion
+  cedula.value       = usuario.value.cedula
+}); 
+
+const confirmarPedido = async () => {
+  try{
+  await pedido.crearPedido(nombre.value, email.value, telefono.value, direccion.value, detDireccion.value, cedula.value, carroCompras.id)
+  await cart.clearCart()
+  await carroCompras.borrarCarroStorage()
+  await carroCompras.crearCarroStore(auth.id)
+  }catch(e){
+    console.log('error en la creacion del pedido', e)
+  }
+}
 </script>
 
 
@@ -45,12 +78,12 @@ const items = [
         <v-stepper
           v-model="step"
           :items="items"
-          show-actions
+          show-actions="false"
         >
           <!-- Paso 1 -->
           <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.1>
-            <h3 class="text-h6">Order</h3>
+            <h3 class="text-h6">Pedido</h3>
             <br />
             <v-sheet border>
               <v-table>
@@ -95,7 +128,7 @@ const items = [
           <!-- Paso 2 -->
            <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.2>
-            <h3 class="text-h6">Shipping</h3>
+            <h3 class="text-h6">Informacion de Envio</h3>
             <br />
             <v-col
             
@@ -103,8 +136,10 @@ const items = [
             >
               <v-text-field
                 :rules="[rules.required]"
+                v-model = "nombre"
                 label="Nombre"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
 
@@ -117,6 +152,7 @@ const items = [
                 :rules="[rules.required, rules.email]"
                 label="E-mail"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
 
@@ -127,7 +163,9 @@ const items = [
               <v-text-field
                 :rules="[rules.required]"
                 label="Telefono"
+                v-model="telefono"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
 
@@ -138,8 +176,10 @@ const items = [
               <v-text-field
                 :rules="[rules.required]"
                 label="Direccion"
+                v-model="direccion"
                 append-icon="mdi-map-marker"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
 
@@ -152,7 +192,9 @@ const items = [
                 :rules="[rules.required]"
                 label="Detalle de Direccion (apt, edificio, conjunto, etc)"
                 class="margin_left"
+                v-model="detDireccion"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
           </v-row>
@@ -162,10 +204,11 @@ const items = [
               sm="6"
             >
               <v-text-field
-              
                 :rules="[rules.required]"
                 label="Documento de Identidad"
+                v-model="cedula"
                 variant="solo"
+                required
               ></v-text-field>
             </v-col>
  
@@ -204,6 +247,12 @@ const items = [
                 </tbody>
               </v-table>
             </v-sheet>
+            <v-sheet class="d-flex justify-center mt-4">
+            <v-btn color="deep-purple" dark class="boton-confirmar" @click="confirmarPedido"
+            >
+          Confirmar Pedido
+        </v-btn>
+      </v-sheet>
           </template>
         </v-stepper>
       </v-sheet>
@@ -225,5 +274,12 @@ const items = [
 
   .margin_left{
     margin-left: 0px;
-  } 
+  }
+  
+  .boton-confirmar{
+    width: 10vw;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
 </style>

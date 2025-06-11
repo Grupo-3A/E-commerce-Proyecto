@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import uuid
 from app.models import Usuarios
 
 usuario_bp = Blueprint('usuarios', __name__)
@@ -28,19 +29,17 @@ def obtener_usuarios():
 @usuario_bp.route('//<int:id>', methods=['GET'])
 def buscar_usuario(id):
     usuario = Usuarios.query.get_or_404(id)
-    resultado = []
 
-    resultado.append({
-            'id': usuario.id,
-            'nombreUsu': usuario.nombreUsu,
-            'password': usuario.password,
-            'email': usuario.email,
-            'telefono': usuario.telefono,
-            'direccion': usuario.direccion,
-            'detDireccion': usuario.detDireccion,
-            'cedula': usuario.cedula
-        })
-    return jsonify(resultado)
+    return jsonify({
+        'id': usuario.id,
+        'nombreUsu': usuario.nombreUsu,
+        'password': usuario.password,
+        'email': usuario.email,
+        'telefono': usuario.telefono,
+        'direccion': usuario.direccion,
+        'detDireccion': usuario.detDireccion,
+        'cedula': usuario.cedula
+    })
 
 
 @usuario_bp.route('/', methods=['POST'])
@@ -123,3 +122,14 @@ def perfil():
         'nombreUsu': usuario.nombreUsu,
         'email': usuario.email
     })
+
+
+@usuario_bp.route('/tokenNoUser', methods=['POST'])
+def tokenNoUser():
+    guestId = f"guest-{uuid.uuid4()}"
+    access_token = create_access_token(identity=guestId,)
+
+    return jsonify({
+        'token': access_token,
+        'guestId': guestId
+    }), 200

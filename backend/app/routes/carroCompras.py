@@ -37,12 +37,13 @@ def buscar_carroCom(id):
 def crear_carroCom():
     data = request.get_json()
     nuevo_carroCom = CarroCompras(
-        idUsuario=int(data['idUsuario']),
+        idUsuario=data['idUsuario'],
         subtotal=float(data['subtotal'])
     )
     db.session.add(nuevo_carroCom)
     db.session.commit()
-    return jsonify({'mensaje': 'Carro Compras creado exitosamente'}), 201
+
+    return jsonify({'idCarro': nuevo_carroCom.id, 'subtotal':nuevo_carroCom.subtotal}), 201
 
 
 

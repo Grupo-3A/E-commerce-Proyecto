@@ -1,19 +1,15 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { useProductoStore } from '@/stores/Productos';
 
 const router = useRouter()
+const inventario = useProductoStore();
 
-const irAProducto1 = () => {
-  router.push('/ProductLs2')
+const irAProducto1 = (idMarca) => {
+  router.push('/InventarioView')
+  inventario.cargarProductosPorMarca(idMarca)
 }
 
-const irAProducto2 = () => {
-  router.push('/ProductShaft')
-}
-
-const irAProducto3 = () => {
-  router.push('/ProductAgv')
-}
 </script>
 
 <template>
@@ -24,13 +20,13 @@ const irAProducto3 = () => {
 
     <div class="botones-wrapper">
       <div class="botones-container">
-        <v-btn @click="irAProducto1" elevation="24" class="boton-marca">
-          <img class="shift" src="@/assets/ls2.png" alt="LS2">
+        <v-btn @click="irAProducto1(3)" elevation="24" class="boton-marca">
+          <img class="shaft" src="@/assets/ls2.png" alt="LS2">
         </v-btn>
-        <v-btn @click="irAProducto2" elevation="24" class="boton-marca">
-          <img class="shift" src="@/assets/shaft.png" alt="Shaft">
+        <v-btn @click="irAProducto1(2)" elevation="24" class="boton-marca">
+          <img class="shaft" src="@/assets/shaft.png" alt="Shaft">
         </v-btn>
-        <v-btn @click="irAProducto3" elevation="24" class="boton-marca">
+        <v-btn @click="irAProducto1(1)" elevation="24" class="boton-marca">
           <img class="agv" src="@/assets/agv.png" alt="AGV">
         </v-btn>
       </div>
@@ -117,7 +113,7 @@ const irAProducto3 = () => {
     flex-shrink: 0;
   }
 
-  .shift {
+  .shaft {
     width: 300px;
     height: 300px;
     object-fit: contain;

@@ -15,19 +15,24 @@
   import { login } from '@/stores/authService';
   import { useRouter } from 'vue-router';
   import { useAuthStore } from '@/stores/authService';
+  import { carroCompraStore } from '@/stores/carroCompras'
+  import { useCartStore } from '@/stores/carritoItems'
   
   const email = ref('');
   const password = ref('');
   const error = ref('');
   const router = useRouter();
 
+  const carroStore = carroCompraStore()
   const authStore = useAuthStore();
+  const cart = useCartStore()
   
   const handleLogin = async () => {
     try {
       const response = await login(email.value, password.value);
       const usuario = response.usuario
       authStore.iniciarSesion(response.token, usuario.id, usuario.nombre, usuario.email) //llama al metodo que carga los datos del usuario en el localstorage
+      carroStore.actualizarCarroCompras(carroStore.id, usuario.id, cart.subtotal)
       router.push('/'); // Redirigir tras login al viewhome
     } catch (err) {
       console.error('Error al iniciar sesión:', err)

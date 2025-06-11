@@ -1,19 +1,21 @@
 <script setup>
 import { ref } from 'vue'
 import NavigationDrawer from './Navigation-Drawer.vue'
+import NavigationMenu from './Navigation-Menu.vue'
 import SubNavBar from './SubNavBar.vue'
 import usuarioDef from '@/assets/usuarioDef.png'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authService'
 
 const moneda = ref([
-{ title: 'Colombia COP $', link: '/' },
-{ title: 'Dolar $', link: '/productos' }
+{ title: 'Colombia COP $'},
+{ title: 'Dolar $'}
 ])
 
 const isOpen6 = ref(false) 
 
 const isCartOpen = ref(false)
+const isNaviOpen = ref(false)
 
 const menu = ref(false)
 
@@ -40,8 +42,10 @@ const irARegister = () => {
         </template>
 
         <template v-slot:prepend>
-          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)" @click="() => { console.log('clic izq, isNaviOpen=', isNaviOpen); isNaviOpen = true }"></v-app-bar-nav-icon>
         </template>
+
+        <NavigationMenu v-model="isNaviOpen"/>
 
         <v-menu v-model="isOpen6">
         <template v-slot:activator="{ props }">
@@ -136,6 +140,6 @@ const irARegister = () => {
       <NavigationDrawer v-model="isCartOpen" />
         
       <SubNavBar/>
-
     </v-layout>
+    
    </template>

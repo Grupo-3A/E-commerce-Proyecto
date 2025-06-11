@@ -1,12 +1,15 @@
 from flask import Flask
 from flask_cors import CORS
 from app import db
+from app.routes.Categoria import categoria_bp
 from app.routes.favoritos import favoritos_bp
 from app.routes.itemCarro import itemCarro_bp
 from app.routes.productos import productos_bp
 from app.routes.carroCompras import carroCompras_bp
 from app.routes.pedido import pedido_bp
 from app.routes.usuarios import usuario_bp
+from app.routes.Marca import marca_bp
+from app.routes.Talla import talla_bp
 from flask_jwt_extended import JWTManager
 
 
@@ -30,6 +33,9 @@ def create_app():
     app.register_blueprint(pedido_bp, url_prefix='/pedido')
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
     app.register_blueprint(favoritos_bp, url_prefix='/favoritos')
+    app.register_blueprint(categoria_bp, url_prefix='/categoria')
+    app.register_blueprint(marca_bp, url_prefix='/marca')
+    app.register_blueprint(talla_bp, url_prefix='/talla')
 
     return app
 

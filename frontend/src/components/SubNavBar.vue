@@ -1,44 +1,47 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useProductoStore } from '@/stores/Productos';
+
+const router = useRouter()
+const inventario = useProductoStore();
 
 const indumentariaTop = ref([
-{ title: 'Chaquetas', link: '/' },
-{ title: 'Pantalones', link: '/productos' },
-{ title: 'Botas', link: '/servicios' },
-{ title: 'Rodilleras', link: '/contacto' },
-{ title: 'Inpermeables', link: '/contacto' },
-{ title: 'Guantes', link: '/contacto' }
+{ title: 'Chaquetas', value: 2 },
+{ title: 'Pantalones', value: 17},
+{ title: 'Botas', value: 4},
+{ title: 'Rodilleras', value: 5},
+{ title: 'Guantes', value: 3}
 ])
 
 const cascos = ref([
-{ title: 'LS2', link: '/' },
-{ title: 'AGV', link: '/productos' },
-{ title: 'SHAFT', link: '/servicios' }
+{ title: 'LS2', value: 3},
+{ title: 'AGV', value: 1},
+{ title: 'SHAFT', value: 2}
 ])
 
 const repuestos = ref([
-{ title: 'SUSUKI', link: '/' },
-{ title: 'YAMAHA', link: '/productos' },
-{ title: 'BAJAJ', link: '/servicios' },
-{ title: 'DUCATI', link: '/servicios' },
-{ title: 'AUTECO', link: '/servicios' },
-{ title: 'KTM', link: '/servicios' }
+{ title: 'SUSUKI', value: 5},
+{ title: 'YAMAHA', value: 6},
+{ title: 'BAJAJ', value: 7},
+{ title: 'DUCATI', value: 8},
+{ title: 'AUTECO', value: 9},
+{ title: 'KTM', value: 10}
 ])
 
 const accesorios = ref([
-{ title: 'Defensas', link: '/' },
-{ title: 'Protectores', link: '/productos' },
-{ title: 'Soportes', link: '/servicios' },
-{ title: 'Bases', link: '/servicios' },
-{ title: 'Intercomunicadores', link: '/servicios' }
+{ title: 'Defensas', value: 6},
+{ title: 'Soportes', value: 8},
+{ title: 'Bases', value: 9},
+{ title: 'Intercomunicadores', value: 10}
 ])
 
 const mantenimiento = ref([
-{ title: 'Herramientas', link: '/' },
-{ title: 'Lubricantes', link: '/productos' },
-{ title: 'Filtros', link: '/servicios' },
-{ title: 'Frenos', link: '/servicios' },
-{ title: 'Quimicos', link: '/servicios' }
+{ title: 'Herramientas', value: 16},
+{ title: 'Lubricantes', value: 16},
+{ title: 'Filtros', value: 16},
+{ title: 'Frenos', value: 16},
+{ title: 'Quimicos', value: 16}
 ])
 
 const isOpen1 = ref(false) 
@@ -47,6 +50,22 @@ const isOpen3 = ref(false)
 const isOpen4 = ref(false) 
 const isOpen5 = ref(false) 
 
+const volverAMenu = () => {
+  router.push('/')
+}
+
+const irAProductos = () => {
+  router.push('/InventarioView')
+  inventario.cargarProductos()
+}
+const irAProductosMarca = (idMarca) => {
+  router.push('/InventarioView')
+  inventario.cargarProductosPorMarca(idMarca)
+}
+const irAProductosCategoria = (idCategoria) => {
+  router.push('/InventarioView')
+  inventario.cargarProductosPorCategoria(idCategoria)
+}
 </script>
 
 <template>
@@ -57,9 +76,11 @@ const isOpen5 = ref(false)
           ></v-img>
         </template>
 
-        <template v-slot:prepend>
-          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)"></v-app-bar-nav-icon>
-        </template>
+    
+          <v-btn icon color="rgba(12, 223, 223, 0.96)">
+            <v-icon @click="volverAMenu">mdi-home</v-icon>
+        </v-btn>
+    
         
         <v-spacer></v-spacer>  
 
@@ -75,9 +96,8 @@ const isOpen5 = ref(false)
           <v-list-item
             v-for="(item, index) in indumentariaTop"
             :key="index"
-            :to="item.link"
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="irAProductosCategoria(item.value)" >{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -95,9 +115,8 @@ const isOpen5 = ref(false)
           <v-list-item
             v-for="(item, index) in cascos"
             :key="index"
-            :to="item.link"
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="irAProductosMarca(item.value)">{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -114,9 +133,9 @@ const isOpen5 = ref(false)
           <v-list-item
             v-for="(item, index) in repuestos"
             :key="index"
-            :to="item.link"
+
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="irAProductosMarca(item.value)">{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -133,9 +152,8 @@ const isOpen5 = ref(false)
           <v-list-item
             v-for="(item, index) in accesorios"
             :key="index"
-            :to="item.link"
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="irAProductosCategoria(item.value)">{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -154,7 +172,7 @@ const isOpen5 = ref(false)
             :key="index"
             :to="item.link"
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="irAProductosCategoria(item.value)">{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -163,7 +181,7 @@ const isOpen5 = ref(false)
       <v-spacer></v-spacer>  
 
         <v-btn icon color="rgba(12, 223, 223, 0.96)">
-          <v-icon>mdi-magnify</v-icon>
+          <v-icon @click="irAProductos" >mdi-magnify</v-icon>
         </v-btn>
 
         <v-btn icon color="rgba(12, 223, 223, 0.96)">
