@@ -36,23 +36,11 @@ const accesorios = ref([
 { title: 'Intercomunicadores', value: 10}
 ])
 
-const mantenimiento = ref([
-{ title: 'Herramientas', value: 16},
-{ title: 'Lubricantes', value: 16},
-{ title: 'Filtros', value: 16},
-{ title: 'Frenos', value: 16},
-{ title: 'Quimicos', value: 16}
-])
 
 const isOpen1 = ref(false) 
 const isOpen2 = ref(false) 
 const isOpen3 = ref(false) 
 const isOpen4 = ref(false) 
-const isOpen5 = ref(false) 
-
-const volverAMenu = () => {
-  router.push('/')
-}
 
 const irAProductos = () => {
   router.push('/InventarioView')
@@ -77,9 +65,12 @@ const irAProductosCategoria = (idCategoria) => {
         </template>
 
     
-          <v-btn icon color="rgba(12, 223, 223, 0.96)">
-            <v-icon @click="volverAMenu">mdi-home</v-icon>
-        </v-btn>
+        <template v-slot:prepend>
+          <v-app-bar-nav-icon
+            color="rgba(12, 223, 223, 0.96)"
+            @click="$emit('toggle-menu')"
+          />
+        </template>
     
         
         <v-spacer></v-spacer>  
@@ -158,25 +149,6 @@ const irAProductosCategoria = (idCategoria) => {
         </v-list>
       </v-menu>
 
-      <v-menu v-model="isOpen5">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text" >
-            Mantenimiento y Cuidado
-          <v-icon color="rgba(12, 223, 223, 0.96)"> {{ isOpen5 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in mantenimiento"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title @click="irAProductosCategoria(item.value)">{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
 
       <v-spacer></v-spacer>  
 
@@ -185,7 +157,7 @@ const irAProductosCategoria = (idCategoria) => {
         </v-btn>
 
         <v-btn icon color="rgba(12, 223, 223, 0.96)">
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon>mdi-headset</v-icon>
         </v-btn>
       </v-app-bar>
    </template>

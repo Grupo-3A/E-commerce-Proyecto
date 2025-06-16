@@ -32,15 +32,18 @@ export const useProductoStore = defineStore('producto',{
         marcas: []
     }),
     actions: {
-          async cargarProductos() {
+          async cargarProductos(search = '') {
             try {
-              const response = await getProductos();
+              const params = search.trim() ? { search } : {}
+              const response = await axios.get(API, { params })
               this.productos = response.data.map(item => ({
                 ...item,
                 imagenPrin: resolveImage(item.imagenPrin)
-              }));
+              }))
+              return this.productos
             } catch (error) {
-              console.error('Error cargando productos:', error);
+              console.error('Error cargando productos:', error)
+              return []
             }
           },
       

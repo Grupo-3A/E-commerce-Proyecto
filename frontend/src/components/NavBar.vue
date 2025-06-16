@@ -1,11 +1,10 @@
 <script setup>
-import { ref } from 'vue'
-import NavigationDrawer from './Navigation-Drawer.vue'
-import NavigationMenu from './Navigation-Menu.vue'
-import SubNavBar from './SubNavBar.vue'
+import { ref} from 'vue'
 import usuarioDef from '@/assets/usuarioDef.png'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authService'
+import debounce from 'lodash/debounce'
+import { useProductoStore } from '@/stores/Productos'
 
 const moneda = ref([
 { title: 'Colombia COP $'},
@@ -14,10 +13,9 @@ const moneda = ref([
 
 const isOpen6 = ref(false) 
 
-const isCartOpen = ref(false)
-const isNaviOpen = ref(false)
-
 const menu = ref(false)
+
+const productoStore = useProductoStore()
 
 const router = useRouter()
 
@@ -29,11 +27,53 @@ const irALogin = () => {
 const irARegister = () => {
   router.push('/RegisterUser')
 }
+
+const volverAMenu = () => {
+  router.push('/')
+}
+
+
+// Estado
+const searchQuery = ref('')
+const liveResults = ref([])
+const menuOpen    = ref(false)
+
+// 1) fetchLive lee siempre de searchQuery.value
+const fetchLive = debounce(async () => {
+  const q = String(searchQuery.value || '').trim()
+  if (!q) {
+    liveResults.value = []
+    menuOpen.value = false
+    return
+  }
+  liveResults.value = await productoStore.cargarProductos(q)
+  menuOpen.value = liveResults.value.length > 0
+}, 1000)
+
+// 2) onInput dispara fetchLive sin argumentos
+function onInput() {
+  fetchLive()
+}
+
+// 3) onSelect con objeto producto
+function onSelect(prod) {
+  menuOpen.value = false
+  searchQuery.value = ''
+  router.push({ name: 'detalleProducto', params: { id: prod.id }})
+}
+
+// 4) onEnter para ir a inventario
+function onEnter() {
+  const q = String(searchQuery.value || '').trim()
+  if (!q) return
+  menuOpen.value = false
+  router.push('/InventarioView')
+}
 </script>
 
-<template>
-    <v-layout>
 
+
+<template>
       <v-app-bar color="teal-darken-4">
         <template v-slot:image>
           <v-img
@@ -42,10 +82,47 @@ const irARegister = () => {
         </template>
 
         <template v-slot:prepend>
-          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)" @click="() => { console.log('clic izq, isNaviOpen=', isNaviOpen); isNaviOpen = true }"></v-app-bar-nav-icon>
-        </template>
+        <v-btn icon color="rgba(12, 223, 223, 0.96)">
+            <v-icon @click="volverAMenu">mdi-home</v-icon>
+        </v-btn>
+      </template>
 
-        <NavigationMenu v-model="isNaviOpen"/>
+      <v-spacer/>
+   
+      <!-- Buscador -->
+    <div style="position: relative; flex: 1; max-width: 400px; margin: 0 16px;">
+      <v-text-field
+        v-model="searchQuery"
+        placeholder="Buscar productos..."
+        append-inner-icon="mdi-magnify"
+        dense flat hide-details
+        @input="onInput"
+        @keyup.enter="onEnter"
+        @click:append-inner="onEnter"
+      />
+
+      <!-- Menú de sugerencias básico -->
+      <v-menu
+        v-model="menuOpen"
+        activator="parent"
+        offset-y
+        max-width="400"
+      >
+        <v-list>
+          <v-list-item
+            v-for="p in liveResults"
+            :key="p.id"
+            @click="onSelect(p)"
+            ripple
+          >
+            <v-list-item-title>{{ p.nombre }} — ${{ p.precio }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+
+
+    <v-spacer/>
 
         <v-menu v-model="isOpen6">
         <template v-slot:activator="{ props }">
@@ -130,16 +207,13 @@ const irARegister = () => {
   </div>
 
         
-        <!--boton carrito-->
-        <v-btn icon color="rgba(190, 24, 60, 0.96)" @click="isCartOpen = true">
-          <v-icon>mdi-cart</v-icon>
-        </v-btn>
-      </v-app-bar>
-
-      <!--Llamado al componente con la funcionalidad del carrito-->
-      <NavigationDrawer v-model="isCartOpen" />
+        <v-btn 
+            icon 
+            color="rgba(190, 24, 60, 0.96)" 
+            @click="$emit('toggle-cart')"
+          >
+            <v-icon>mdi-cart</v-icon>
+          </v-btn>
+        </v-app-bar>
         
-      <SubNavBar/>
-    </v-layout>
-    
    </template>

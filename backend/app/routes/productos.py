@@ -32,8 +32,18 @@ def buscar_producto(id):
 # GET: Obtener todos los productos
 @productos_bp.route('/', methods=['GET'])
 def obtener_productos():
+    q = request.args.get('search', '').strip()
     resultado = []
-    productos = Productos.query.all()
+    # Base query
+    query = Productos.query
+    # Si viene search, filtramos por nombre o descripción
+    if q:
+        like_expr = f"%{q}%"
+        query = query.filter(
+            Productos.nombre.ilike(like_expr) |
+            Productos.descripcion.ilike(like_expr)
+        )
+    productos = query.all()
 
     for item in productos:
         categoria = Categoria.query.get_or_404(item.idCategoria)
@@ -155,3 +165,5 @@ def eliminar_producto(id):
     db.session.delete(producto)
     db.session.commit()
     return jsonify({'mensaje': 'Producto eliminado'})
+
+

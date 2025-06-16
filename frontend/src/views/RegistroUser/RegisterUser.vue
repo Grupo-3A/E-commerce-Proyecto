@@ -2,7 +2,7 @@
   <v-container fluid class="container">
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card elevation="2" class="pa-4">
+        <v-card elevation="8" class="pa-4">
           <v-card-title class="justify-center">
             <span class="text-h5" style="color: var(--v-primary-base)">Crear Cuenta</span>
           </v-card-title>
@@ -77,6 +77,7 @@
               color="primary"
               class="mt-4"
               block
+              @click="irALogin"
             >
               Registrar
             </v-btn>
@@ -100,6 +101,7 @@
 <script setup>
 import { ref } from 'vue'
 import { register } from '@/stores/authService'
+import { useRouter } from 'vue-router'
 
 const usuario = ref({
   nombreUsu: '', email: '', password: '', telefono: '', cedula: '', direccion: '', detDireccion: ''
@@ -121,12 +123,19 @@ const handleRegister = async () => {
     }
   }
 }
+
+const router = useRouter()
+
+const irALogin = () => {
+  router.push('/LoginUser')
+}
 </script>
 
 <style scoped>
 /* Contenedor centrado y fondo */
 .container {
-  margin-top: 80px;
+  width: 100vw;
+  margin-top: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
