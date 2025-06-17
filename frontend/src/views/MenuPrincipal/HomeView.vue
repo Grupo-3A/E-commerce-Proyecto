@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { useProductoStore } from '@/stores/Productos';
+import { useProductoStore } from '@/stores/productos';
 
 const router = useRouter()
 const inventario = useProductoStore();

@@ -81,17 +81,20 @@
 
     <v-card-actions class="mt-auto">
       <v-btn
+        class="btn mr-3 elevation-2 justify-center"
         color="deep-purple-lighten-2"
-        text="Ver Más"
-        border
+        rounded
         @click="verDetalle"
-      ></v-btn>
+      > <v-icon left>mdi-chevron-double-right</v-icon>
+        Ver Más
+      </v-btn>
       <v-btn
+        class="btn mr-3 elevation-2 justify-center"
         color="deep-purple-lighten-2"
-        text="Agregar"
-        border
+        rounded
         @click="agregarAlCarrito"
-      ></v-btn>
+      >
+      <v-icon left>mdi-cart-plus</v-icon>Agregar</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -127,6 +130,14 @@ async function agregarAlCarrito() {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.btn{
+  background-color: var(--v-indigo-darken-2) !important;
+  transition: background-color 0.3s;
+  min-width:130px;
+  align-items: center;
+  display: flex;
 }
 
 </style>

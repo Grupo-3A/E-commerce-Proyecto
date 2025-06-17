@@ -30,6 +30,7 @@
       v-if="!isLoading && visibleCount < inventario.productos.length"
       class="load-more-container"
     >
+    <v-spacer></v-spacer>
       <button @click="cargarMas" class="btn-cargar-mas">
         Cargar más
       </button>
@@ -39,8 +40,9 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useProductoStore } from '@/stores/Productos';
+import { useProductoStore } from '@/stores/productos';
 import ProductoCard from '@/components/ProductoCard.vue';
+
 
 const inventario = useProductoStore();
 

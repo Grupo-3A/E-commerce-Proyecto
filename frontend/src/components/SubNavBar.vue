@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useProductoStore } from '@/stores/Productos';
+import { useProductoStore } from '@/stores/productos';
 
 const router = useRouter()
 const inventario = useProductoStore();
@@ -42,10 +42,6 @@ const isOpen2 = ref(false)
 const isOpen3 = ref(false) 
 const isOpen4 = ref(false) 
 
-const irAProductos = () => {
-  router.push('/InventarioView')
-  inventario.cargarProductos()
-}
 const irAProductosMarca = (idMarca) => {
   router.push('/InventarioView')
   inventario.cargarProductosPorMarca(idMarca)
@@ -151,10 +147,6 @@ const irAProductosCategoria = (idCategoria) => {
 
 
       <v-spacer></v-spacer>  
-
-        <v-btn icon color="rgba(12, 223, 223, 0.96)">
-          <v-icon @click="irAProductos" >mdi-magnify</v-icon>
-        </v-btn>
 
         <v-btn icon color="rgba(12, 223, 223, 0.96)">
           <v-icon>mdi-headset</v-icon>

@@ -1,10 +1,9 @@
 <script setup>
-import { ref} from 'vue'
-import usuarioDef from '@/assets/usuarioDef.png'
+import { ref, watch, computed} from 'vue'
+import usuarioDef from '@/assets/usuarioH.png'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authService'
-import debounce from 'lodash/debounce'
-import { useProductoStore } from '@/stores/Productos'
+import BarraBusqueda from './BarraBusqueda.vue'
 
 const moneda = ref([
 { title: 'Colombia COP $'},
@@ -15,11 +14,13 @@ const isOpen6 = ref(false)
 
 const menu = ref(false)
 
-const productoStore = useProductoStore()
-
 const router = useRouter()
 
-const usuarioLog = useAuthStore()
+const userStore = useAuthStore()
+
+const usuarioLog = ref(true); 
+
+const email = computed(() => userStore.email);
 
 const irALogin = () => {
   router.push('/LoginUser')
@@ -32,43 +33,12 @@ const volverAMenu = () => {
   router.push('/')
 }
 
-
-// Estado
-const searchQuery = ref('')
-const liveResults = ref([])
-const menuOpen    = ref(false)
-
-// 1) fetchLive lee siempre de searchQuery.value
-const fetchLive = debounce(async () => {
-  const q = String(searchQuery.value || '').trim()
-  if (!q) {
-    liveResults.value = []
-    menuOpen.value = false
-    return
+watch(email, async () => {
+  if (email.value != null ) {
+    usuarioLog.value = ref(false)
   }
-  liveResults.value = await productoStore.cargarProductos(q)
-  menuOpen.value = liveResults.value.length > 0
-}, 1000)
+});
 
-// 2) onInput dispara fetchLive sin argumentos
-function onInput() {
-  fetchLive()
-}
-
-// 3) onSelect con objeto producto
-function onSelect(prod) {
-  menuOpen.value = false
-  searchQuery.value = ''
-  router.push({ name: 'detalleProducto', params: { id: prod.id }})
-}
-
-// 4) onEnter para ir a inventario
-function onEnter() {
-  const q = String(searchQuery.value || '').trim()
-  if (!q) return
-  menuOpen.value = false
-  router.push('/InventarioView')
-}
 </script>
 
 
@@ -89,38 +59,7 @@ function onEnter() {
 
       <v-spacer/>
    
-      <!-- Buscador -->
-    <div style="position: relative; flex: 1; max-width: 400px; margin: 0 16px;">
-      <v-text-field
-        v-model="searchQuery"
-        placeholder="Buscar productos..."
-        append-inner-icon="mdi-magnify"
-        dense flat hide-details
-        @input="onInput"
-        @keyup.enter="onEnter"
-        @click:append-inner="onEnter"
-      />
-
-      <!-- Menú de sugerencias básico -->
-      <v-menu
-        v-model="menuOpen"
-        activator="parent"
-        offset-y
-        max-width="400"
-      >
-        <v-list>
-          <v-list-item
-            v-for="p in liveResults"
-            :key="p.id"
-            @click="onSelect(p)"
-            ripple
-          >
-            <v-list-item-title>{{ p.nombre }} — ${{ p.precio }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </div>
-
+      <BarraBusqueda/>
 
     <v-spacer/>
 
@@ -158,12 +97,12 @@ function onEnter() {
         </v-btn>
       </template>
 
-      <v-card min-width="300">
+      <v-card min-width="300" max-width="350">
         <v-list>
           <v-list-item
             :prepend-avatar="usuarioDef"
-            :subtitle= usuarioLog.email
-            :title= usuarioLog.usuario
+            :subtitle= userStore.email
+            :title= userStore.usuario
           >
             <template v-slot:append>
               <v-btn
@@ -179,7 +118,7 @@ function onEnter() {
         <v-divider></v-divider>
 
         <v-list>
-          <v-list-item>
+          <v-list-item v-if="usuarioLog">
            <v-btn
             @click="irALogin"
             color="purple"
@@ -190,7 +129,18 @@ function onEnter() {
           </v-btn>
           </v-list-item>
 
-          <v-list-item >
+          <v-list-item v-else>
+           <v-btn
+            @click="irALogin"
+            color="purple"
+            block
+            rounded="xl"
+            class="text-white text-uppercase font-weight-bold">
+            Cerrar Sesion
+          </v-btn>
+          </v-list-item>
+
+          <v-list-item v-if="usuarioLog">
           <v-btn
             @click="irARegister"
             color="purple"

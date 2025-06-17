@@ -21,15 +21,16 @@ export const getProductosPorCategoria = (idCategoria) =>
   axios.get(`${API}categoria/${idCategoria}`);
 
 export const getProductosPorMarca = (idMarca) =>
-    axios.get(`${API}marca/${idMarca}`);
+  axios.get(`${API}marca/${idMarca}`);
+
+export const getFavoritosPorId = (id) => 
+  axios.get(`http://localhost:5000/favoritos/obtener-favoritos/${id}`);
 
 
 export const useProductoStore = defineStore('producto',{
     state: () => ({
         productoActual: null,
         productos: [],
-        categorias: [],
-        marcas: []
     }),
     actions: {
           async cargarProductos(search = '') {
@@ -84,6 +85,18 @@ export const useProductoStore = defineStore('producto',{
               };
             } catch (error) {
               console.error('Error cargando producto:', error);
+            }
+          },
+
+          async cargarFavoritos(id) {
+            try {
+              const response = await getFavoritosPorId(id);
+              this.productos = response.data.map(item => ({
+                ...item,
+                imagenPrin: resolveImage(item.imagenPrin)
+              }));
+            } catch (error) {
+              console.error('Error cargando favoritos:', error);
             }
           }
     }
