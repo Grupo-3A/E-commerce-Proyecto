@@ -1,62 +1,49 @@
 <script setup>
-import { ref } from 'vue'
-
-const indumentariaTop = ref([
-{ title: 'Chaquetas', link: '/' },
-{ title: 'Pantalones', link: '/productos' },
-{ title: 'Botas', link: '/servicios' },
-{ title: 'Rodilleras', link: '/contacto' },
-{ title: 'Inpermeables', link: '/contacto' },
-{ title: 'Guantes', link: '/contacto' }
-])
-
-const cascos = ref([
-{ title: 'LS2', link: '/' },
-{ title: 'AGV', link: '/productos' },
-{ title: 'SHAFT', link: '/servicios' }
-])
-
-const repuestos = ref([
-{ title: 'SUSUKI', link: '/' },
-{ title: 'YAMAHA', link: '/productos' },
-{ title: 'BAJAJ', link: '/servicios' },
-{ title: 'DUCATI', link: '/servicios' },
-{ title: 'AUTECO', link: '/servicios' },
-{ title: 'KTM', link: '/servicios' }
-])
-
-const accesorios = ref([
-{ title: 'Defensas', link: '/' },
-{ title: 'Protectores', link: '/productos' },
-{ title: 'Soportes', link: '/servicios' },
-{ title: 'Bases', link: '/servicios' },
-{ title: 'Intercomunicadores', link: '/servicios' }
-])
-
-const mantenimiento = ref([
-{ title: 'Herramientas', link: '/' },
-{ title: 'Lubricantes', link: '/productos' },
-{ title: 'Filtros', link: '/servicios' },
-{ title: 'Frenos', link: '/servicios' },
-{ title: 'Quimicos', link: '/servicios' }
-])
+import { ref, watch, computed} from 'vue'
+import usuarioDef from '@/assets/usuarioH.png'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authService'
+import BarraBusqueda from './BarraBusqueda.vue'
 
 const moneda = ref([
-{ title: 'Colombia COP $', link: '/' },
-{ title: 'Dolar $', link: '/productos' }
+{ title: 'Colombia COP $'},
+{ title: 'Dolar $'}
 ])
 
-const isOpen1 = ref(false) 
-const isOpen2 = ref(false) 
-const isOpen3 = ref(false) 
-const isOpen4 = ref(false) 
-const isOpen5 = ref(false) 
 const isOpen6 = ref(false) 
+
+const menu = ref(false)
+
+const router = useRouter()
+
+const userStore = useAuthStore()
+
+const usuarioLog = ref(true); 
+
+const email = computed(() => userStore.email);
+
+const irALogin = () => {
+  router.push('/LoginUser')
+}
+const irARegister = () => {
+  router.push('/RegisterUser')
+}
+
+const volverAMenu = () => {
+  router.push('/')
+}
+
+watch(email, async () => {
+  if (email.value != null ) {
+    usuarioLog.value = ref(false)
+  }
+});
+
 </script>
 
-<template>
-    <v-layout>
 
+
+<template>
       <v-app-bar color="teal-darken-4">
         <template v-slot:image>
           <v-img
@@ -65,8 +52,16 @@ const isOpen6 = ref(false)
         </template>
 
         <template v-slot:prepend>
-          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)"></v-app-bar-nav-icon>
-        </template>
+        <v-btn icon color="rgba(12, 223, 223, 0.96)">
+            <v-icon @click="volverAMenu">mdi-home</v-icon>
+        </v-btn>
+      </template>
+
+      <v-spacer/>
+   
+      <BarraBusqueda/>
+
+    <v-spacer/>
 
         <v-menu v-model="isOpen6">
         <template v-slot:activator="{ props }">
@@ -87,137 +82,88 @@ const isOpen6 = ref(false)
         </v-list>
       </v-menu>
 
-        <v-btn icon color="rgba(190, 24, 60, 0.96)">
-          <v-icon>mdi-account</v-icon>
+      <!--boton usuario iniciar y registrarse-->
+  <div class="text-center">
+    <v-menu
+      v-model="menu"
+      :close-on-content-click="false"
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn
+          color="rgba(190, 24, 60, 0.96)"
+          v-bind="props"
+        >
+          <v-icon size="26">mdi-account</v-icon>
         </v-btn>
+      </template>
 
-        <v-btn icon color="rgba(190, 24, 60, 0.96)">
-          <v-icon>mdi-cart</v-icon>
-        </v-btn>
+      <v-card min-width="300" max-width="350">
+        <v-list>
+          <v-list-item
+            :prepend-avatar="usuarioDef"
+            :subtitle= userStore.email
+            :title= userStore.usuario
+          >
+            <template v-slot:append>
+              <v-btn
+                :class=" 'text-grey'"
+                icon="mdi-account"
+                variant="text"
+                
+              ></v-btn>
+            </template>
+          </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list>
+          <v-list-item v-if="usuarioLog">
+           <v-btn
+            @click="irALogin"
+            color="purple"
+            block
+            rounded="xl"
+            class="text-white text-uppercase font-weight-bold">
+            Iniciar Sesion
+          </v-btn>
+          </v-list-item>
+
+          <v-list-item v-else>
+           <v-btn
+            @click="irALogin"
+            color="purple"
+            block
+            rounded="xl"
+            class="text-white text-uppercase font-weight-bold">
+            Cerrar Sesion
+          </v-btn>
+          </v-list-item>
+
+          <v-list-item v-if="usuarioLog">
+          <v-btn
+            @click="irARegister"
+            color="purple"
+            block
+            rounded="xl"
+            class="text-white text-uppercase font-weight-bold">
+            Registrarse
+          </v-btn>
+             
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-menu>
+  </div>
+
+        
+        <v-btn 
+            icon 
+            color="rgba(190, 24, 60, 0.96)" 
+            @click="$emit('toggle-cart')"
+          >
+            <v-icon>mdi-cart</v-icon>
+          </v-btn>
         </v-app-bar>
-
-
         
-      <v-app-bar color="teal-darken-4">
-        <template v-slot:image>
-          <v-img
-            gradient="to top right, rgba(0, 3, 3, 0.8), rgba(57, 65, 64, 0.8)"
-          ></v-img>
-        </template>
-
-        <template v-slot:prepend>
-          <v-app-bar-nav-icon color="rgba(12, 223, 223, 0.96)"></v-app-bar-nav-icon>
-        </template>
-        
-        <v-spacer></v-spacer>  
-
-        <v-menu v-model="isOpen1">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text">
-            Indumentaria Top
-          <v-icon color="rgba(12, 223, 223, 0.96)">{{ isOpen1 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in indumentariaTop"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-
-      <v-menu v-model="isOpen2">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text">
-            Cascos
-          <v-icon color="rgba(12, 223, 223, 0.96)">{{ isOpen2 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in cascos"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu v-model="isOpen3">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text">
-            Repuestos
-          <v-icon color="rgba(12, 223, 223, 0.96)">{{ isOpen3 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in repuestos"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu v-model="isOpen4">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text">
-            Accesorios para Motos
-          <v-icon color="rgba(12, 223, 223, 0.96)">{{ isOpen4 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in accesorios"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu v-model="isOpen5">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text" >
-            Mantenimiento y Cuidado
-          <v-icon color="rgba(12, 223, 223, 0.96)"> {{ isOpen5 ? 'mdi-menu-up' : 'mdi-menu-down' }}</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in mantenimiento"
-            :key="index"
-            :to="item.link"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-
-      <v-spacer></v-spacer>  
-
-        <v-btn icon color="rgba(12, 223, 223, 0.96)">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-
-        <v-btn icon color="rgba(12, 223, 223, 0.96)">
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
-      </v-app-bar>
-
-    </v-layout>
    </template>
