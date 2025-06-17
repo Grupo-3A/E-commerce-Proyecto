@@ -1,6 +1,35 @@
+<script setup>
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { useProductoStore } from '@/stores/productos';
+import { useCartStore } from '@/stores/carritoItems';
+
+const route = useRoute();
+const productoStore = useProductoStore();
+const carrito = useCartStore();
+const cantidad = ref(1);
+
+const producto = computed(() => productoStore.productoActual);
+
+onMounted(() => {
+  productoStore.cargarProducto(route.params.id);
+});
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    productoStore.cargarProducto(newId);
+  }
+);
+
+const agregarAlCarrito = () => {
+  carrito.agregarItem({ ...producto.value, cantidad: cantidad.value });
+};
+</script>
+
 <template>
   <v-container fluid class="detalle-producto py-8">
-    <div class="wrapper mx-auto">
+    <div class="wrapper mx-auto" v-if="producto">
       <v-card elevation="4" class="pa-8 white">
         <v-row align="start" justify="space-between">
           <!-- Imagen del producto -->
@@ -49,7 +78,7 @@
             <v-row align="center" class="mb-6">
               <v-col cols="auto" class="d-flex align-center">
                 <v-btn icon class="btn-favorito mr-3 elevation-2">
-                  <v-icon size="28" color="red">mdi-heart-outline</v-icon>
+                  <v-icon size="28">mdi-heart-outline</v-icon>
                 </v-btn>
                 <span class="font-weight-medium purple--text text--darken-2">Favorito</span>
               </v-col>
@@ -86,43 +115,12 @@
   </v-container>
 </template>
 
-<script setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useProductoStore } from '@/stores/productos';
-import { useCartStore } from '@/stores/carritoItems';
-
-const route = useRoute();
-const productoStore = useProductoStore();
-const carrito = useCartStore();
-const cantidad = ref(1);
-
-const producto = computed(() => productoStore.productoActual);
-
-onMounted(() => {
-  productoStore.cargarProducto(route.params.id);
-});
-
-watch(
-  () => route.params.id,
-  (newId) => {
-    productoStore.cargarProducto(newId);
-  }
-);
-
-const agregarAlCarrito = () => {
-  carrito.agregarItem({ ...producto.value, cantidad: cantidad.value });
-};
-</script>
 
 <style scoped>
 .detalle-producto {
   background-color: var(--v-deep-purple-lighten-3);
   width: 100vw;
   min-height: 100vh;
-
-  justify-content: center;
-  align-items: center;
   margin-top: 50px;
 }
 
