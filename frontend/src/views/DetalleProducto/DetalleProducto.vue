@@ -2,12 +2,16 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProductoStore } from '@/stores/productos';
+import { carroCompraStore } from '@/stores/carroCompras';
 import { useCartStore } from '@/stores/carritoItems';
+import { useAuthStore } from '@/stores/authService';
 
 const route = useRoute();
 const productoStore = useProductoStore();
-const carrito = useCartStore();
+const itemCarro = useCartStore();
 const cantidad = ref(1);
+const carroCompras = carroCompraStore();
+const auth = useAuthStore();
 
 const producto = computed(() => productoStore.productoActual);
 
@@ -22,9 +26,13 @@ watch(
   }
 );
 
-const agregarAlCarrito = () => {
-  carrito.agregarItem({ ...producto.value, cantidad: cantidad.value });
-};
+
+async function agregarAlCarrito() {
+  const qty = Number(cantidad.value) 
+  await itemCarro.addToCart(producto.value, carroCompras.id, qty);
+  const nuevoSub = itemCarro.subtotal
+  await carroCompras.actualizarCarroCompras(carroCompras.id, auth.id, nuevoSub) 
+}
 </script>
 
 <template>
